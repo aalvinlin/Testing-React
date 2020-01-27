@@ -31,5 +31,31 @@ test("Next button can be clicked", () => {
     fireEvent.click(nextButton);
 })
 
+const fakeData = {
+    prev: null,
+    next: "text",
+    results: [
+        {name: "character1", url: "url1"},
+        {name: "Test Name Two", url: "url2"},
+        {name: "Test Name Three", url: "url3"}
+    ]
+}
+
 // API call tests with mockGetData
+test ("API call is made", async () => {
+    
+    jest.mock("../api");
+
+    console.log(mockGetData);
+
+    mockGetData.mockResolvedValueOnce(fakeData);
+    const {queryByText} = render(<StarWarsCharacters />);
+
+    await wait(() => expect(queryByText(/character1/i)));
+    queryByText("character1");
+    
+    expect(mockGetData).toHaveBeenCalled(1);
+    expect(mockGetData).toHaveBeenCalledWith("https://swapi.co/api/people");
+
+})
 
