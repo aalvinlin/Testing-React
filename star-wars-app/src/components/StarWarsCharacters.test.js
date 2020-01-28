@@ -1,7 +1,8 @@
 import React from "react";
 import {render, fireEvent, wait } from "@testing-library/react";
 import StarWarsCharacters from "./StarWarsCharacters";
-import {getData as mockGetData} from "../api/getData";
+// import {getData as mockGetData} from "../api/getData";
+import {getData as mockGetData} from "../api";
 
 // component mounting tests
 test("renders the StarWarsCharacters component", () => {
@@ -31,7 +32,7 @@ test("Next button can be clicked", () => {
     fireEvent.click(nextButton);
 })
 
-const fakeData = {
+const testData = {
     prev: null,
     next: "text",
     results: [
@@ -41,21 +42,22 @@ const fakeData = {
     ]
 }
 
-// API call tests with mockGetData
+jest.mock("../api");
+
+// // API call tests with mockGetData
 test ("API call is made", async () => {
-    
-    jest.mock("../api");
 
     console.log(mockGetData);
 
-    mockGetData.mockResolvedValueOnce(fakeData);
+    mockGetData.mockResolvedValue(testData);
     const {queryByText} = render(<StarWarsCharacters />);
 
     await wait(() => expect(queryByText(/character1/i)));
     queryByText("character1");
     
-    expect(mockGetData).toHaveBeenCalled(1);
+    expect(mockGetData).toHaveBeenCalledTimes(6);
     expect(mockGetData).toHaveBeenCalledWith("https://swapi.co/api/people");
 
 })
+
 
